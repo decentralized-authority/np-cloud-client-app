@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { dataStore } from './modules/data-store';
-import { dataStoreKeys } from './constants';
+import { dataStoreKeys, POCKET_ENDPOINT } from './constants';
 import { MasterPassword } from './components/master-password';
 import { CreateAccount } from './components/create-account';
 import swal from 'sweetalert';
 import { Account } from './types/account';
 import { RegisterUser } from './components/register';
+import { getPocketInstance } from './util';
+import { AccountController } from './modules/account-controller';
+import { Configuration, HttpRpcProvider, Pocket } from '@pokt-network/pocket-js';
 
 const handleError = err => {
   console.error(err);
@@ -22,8 +25,16 @@ const App = () => {
   const [ account, setAccount ] = useState(null);
   const [ userId, setUserId ] = useState('');
   const [ windowSize, setWindowSize ] = useState({height: window.innerHeight, width: window.innerWidth});
+  const [ accountController, setAccountController ] = useState(null);
 
   useEffect(() => {
+
+    const dispatcher = new URL(POCKET_ENDPOINT);
+    const configuration = new Configuration(5, 1000, 0, 40000, undefined, undefined, undefined, undefined, undefined, undefined, false);
+    const pocket = new Pocket([dispatcher], new HttpRpcProvider(dispatcher), configuration);
+
+    setAccountController(new AccountController(pocket));
+
     const account = dataStore.getItem(dataStoreKeys.ACCOUNT);
     if(account)
       setAccount(new Account(account));
@@ -54,7 +65,7 @@ const App = () => {
   if(!masterPassword) {
     activeView = <MasterPassword handleError={handleError} onChange={setMasterPassword} />;
   } else if(!account) {
-    activeView = <CreateAccount handleError={handleError} masterPassword={masterPassword} onChange={setAccount} />;
+    activeView = <CreateAccount accountController={accountController} handleError={handleError} masterPassword={masterPassword} onChange={setAccount} />;
   } else if(!userId) {
     activeView = <RegisterUser handleError={handleError} masterPassword={masterPassword} onChange={setUserId} />;
   }

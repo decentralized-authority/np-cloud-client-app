@@ -1,5 +1,3 @@
-import { getPocketInstance } from '../util';
-
 export class Account {
 
   /**
@@ -23,9 +21,5 @@ export class Account {
   constructor(data) {
     Object.assign(this, data);
   }
-
-  // await getRawPrivateKey(masterPassword) {
-  //   const pocket = getPocketInstance()
-  // }
 
 }

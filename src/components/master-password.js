@@ -80,7 +80,7 @@ export const MasterPassword = ({ handleError, onChange }) => {
           title: 'Oops!',
           text: 'Password and repeated password do not match.',
         });
-      } else if(password.length < 12) {
+      } else if(password.trim().length < 12) {
         return swal({
           icon: 'warning',
           title: 'Oops!',

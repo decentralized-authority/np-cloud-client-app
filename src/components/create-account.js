@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { dataStoreKeys, POCKET_ENDPOINT } from '../constants';
+import { dataStoreKeys } from '../constants';
 import { dataStore } from '../modules/data-store';
-import { getPocketInstance } from '../util';
-import _ from 'lodash';
-import { Account } from '../types/account';
+import { AccountController } from '../modules/account-controller';
 
-export const CreateAccount = ({ handleError, masterPassword, onChange }) => {
+export const CreateAccount = ({ accountController, handleError, masterPassword, onChange }) => {
 
   const [ privateKey, setPrivateKey ] = useState('');
   const [ showKey, setShowKey ] = useState(false);
@@ -59,34 +57,12 @@ export const CreateAccount = ({ handleError, masterPassword, onChange }) => {
   const onSubmit = async e => {
     try {
       e.preventDefault();
-      const pocket = getPocketInstance(POCKET_ENDPOINT);
       let account;
       if(importAccount) {
         const preppedPrivateKey = privateKey.trim();
-        const res = await pocket.keybase.importAccount(Buffer.from(preppedPrivateKey, 'hex'), masterPassword);
-        if(_.isError(res))
-          throw(res);
-        const ppk = await pocket.keybase.exportPPKfromAccount(res.addressHex, masterPassword, '', masterPassword);
-        if(_.isError(ppk))
-          throw(ppk);
-        account = new Account({
-          address: res.addressHex,
-          publicKey: res.publicKey.toString('hex'),
-          privateKeyEncrypted: ppk,
-        });
+        account = await accountController.importAccount(preppedPrivateKey, masterPassword);
       } else {
-        const res = await pocket.keybase.createAccount(masterPassword);
-        if(_.isError(res))
-          throw(res);
-        const ppk = await pocket.keybase.exportPPKfromAccount(res.addressHex, masterPassword, '', masterPassword);
-        const unlockedAccount = await pocket.keybase.getUnlockedAccount(res.addressHex, masterPassword);
-        if(_.isError(unlockedAccount))
-          throw unlockedAccount;
-        account = new Account({
-          address: res.addressHex,
-          publicKey: res.publicKey.toString('hex'),
-          privateKeyEncrypted: ppk,
-        });
+        account = await accountController.createAccount(masterPassword);
       }
       dataStore.setItem(dataStoreKeys.ACCOUNT, account);
       onChange(account);
@@ -127,6 +103,7 @@ export const CreateAccount = ({ handleError, masterPassword, onChange }) => {
   );
 };
 CreateAccount.propTypes = {
+  accountController: PropTypes.instanceOf(AccountController),
   masterPassword: PropTypes.string,
   handleError: PropTypes.func,
   onChange: PropTypes.func,
