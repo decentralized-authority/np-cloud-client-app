@@ -8,6 +8,11 @@ import { useState } from 'react';
 import { Stake } from './shared/stake';
 import { ValidatorNodes } from './shared/validator-nodes';
 import { ValidatorNode } from '../types/validator-node';
+import { Stats } from './shared/stats';
+import { PricingController } from '../modules/pricing-controller';
+import * as math from 'mathjs';
+
+const { bignumber } = math;
 
 const mainViews = {
   DASHBOARD: 'DASHBOARD',
@@ -15,7 +20,7 @@ const mainViews = {
   STAKE: '',
 };
 
-export const Dashboard = ({ userId, account, accountController, apiController, apiToken, balance, masterPassword, nodes, handleError, onUpdateNodes }) => {
+export const Dashboard = ({ userId, account, accountController, apiController, apiToken, balance, masterPassword, nodes, pricing, handleError, onUpdateNodes }) => {
 
   const [ mainView, setMainView ] = useState(mainViews.DASHBOARD);
 
@@ -69,6 +74,14 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
     setMainView(mainViews.DASHBOARD);
   };
 
+  let balanceInUSD = '';
+  try {
+    balanceInUSD = pricing.convert(bignumber(balance), PricingController.currencies.USD);
+    balanceInUSD = Number(balanceInUSD).toFixed(2);
+  } catch(err) {
+    // do nothing with error
+  }
+
   return (
     <div style={styles.container}>
       <div className={'pt-2 pb-2 pl-2 d-flex flex-column justify-content-start'} style={styles.leftSidebar}>
@@ -82,7 +95,7 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
           </div>
           <div className={'card-body'}>
             <div className={'d-flex flex-row justify-content-start flex-nowrap'}>
-              <h4><span style={styles.textCol1}>Balance:</span><span style={styles.textCol2} className={'text-monospace'}>{balance} POKT</span></h4>
+              <h4><span style={styles.textCol1}>Balance:</span><span style={styles.textCol2} className={'text-monospace'}>{balance} POKT <small>{balanceInUSD ? `$${balanceInUSD} USD` : ''}</small></span></h4>
             </div>
             <div className={'d-flex flex-row justify-content-start flex-nowrap'}>
               <h4><span style={styles.textCol1}>Address:</span><span style={styles.textCol2} className={'text-monospace'}>{account.address}</span> <span style={styles.textCol2}><a href={'#'} onClick={onCopyAddressClick}><span className={'mdi mdi-content-copy'} /></a></span></h4>
@@ -95,7 +108,7 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
         </div>
 
         {mainView === mainViews.DASHBOARD ?
-          <div></div>
+          <Stats nodes={nodes} handleError={handleError} onDone={() => setMainView(mainViews.DASHBOARD)} />
           :
           mainView === mainViews.SEND ?
             <Send account={account} accountController={accountController} balance={balance} handleError={handleError} masterPassword={masterPassword} onDone={() => setMainView(mainViews.DASHBOARD)} />
@@ -118,6 +131,7 @@ Dashboard.propTypes = {
   apiController: PropTypes.instanceOf(ApiController),
   apiToken: PropTypes.string,
   balance: PropTypes.string,
+  pricing: PropTypes.instanceOf(PricingController),
   nodes: PropTypes.arrayOf(PropTypes.instanceOf(ValidatorNode)),
   handleError: PropTypes.func,
   onUpdateNodes: PropTypes.func,

@@ -11,6 +11,7 @@ import { Configuration, HttpRpcProvider, Pocket } from '@pokt-network/pocket-js'
 import { ApiController } from './modules/api-controller';
 import dayjs from 'dayjs';
 import { Dashboard } from './components/dashboard';
+import { PricingController } from './modules/pricing-controller';
 
 const handleError = err => {
   console.error(err);
@@ -33,6 +34,7 @@ const App = () => {
   const [ apiTokenExpiration, setAPITokenExpiration ] = useState('');
   const [ walletBalance, setWalletBalance ] = useState('0');
   const [ nodes, setNodes ] = useState([]);
+  const [ pricing, setPricing ] = useState(new PricingController({}));
 
   useEffect(() => {
 
@@ -55,6 +57,22 @@ const App = () => {
       const { innerHeight: height, innerWidth: width } = e.target;
       setWindowSize({height, width});
     });
+
+    const getPricing = () => {
+      PricingController.getPricingData([PricingController.currencies.USD])
+        .then(data => {
+          setPricing(new PricingController(data));
+        })
+        .catch(console.error);
+    };
+    const pricingInterval = setInterval(() => {
+      getPricing();
+    }, 60000);
+    getPricing();
+
+    return () => {
+      clearInterval(pricingInterval);
+    };
   }, []);
 
   useEffect(() => {
@@ -166,6 +184,7 @@ const App = () => {
     activeView = <Dashboard account={account}
                             userId={userId}
                             nodes={nodes}
+                            pricing={pricing}
                             accountController={accountController}
                             apiToken={apiToken}
                             balance={walletBalance}

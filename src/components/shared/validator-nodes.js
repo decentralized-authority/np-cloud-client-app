@@ -25,7 +25,7 @@ export const ValidatorNodes = ({ nodes }) => {
       textAlign: 'right',
     },
   };
-  console.log('nodes', nodes);
+
   return (
     <div className={'card flex-grow-1'}>
       <div className={'card-header'}>
