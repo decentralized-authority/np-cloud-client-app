@@ -9,6 +9,7 @@ import { RegisterUser } from './components/register';
 import { AccountController } from './modules/account-controller';
 import { Configuration, HttpRpcProvider, Pocket } from '@pokt-network/pocket-js';
 import { ApiController } from './modules/api-controller';
+import dayjs from 'dayjs';
 
 const handleError = err => {
   console.error(err);
@@ -27,10 +28,10 @@ const App = () => {
   const [ windowSize, setWindowSize ] = useState({height: window.innerHeight, width: window.innerWidth});
   const [ accountController, setAccountController ] = useState(null);
   const [ apiController ] = useState(new ApiController(API_ENDPOINT));
+  const [ apiToken, setAPIToken ] = useState('');
+  const [ apiTokenExpiration, setAPITokenExpiration ] = useState('');
 
   useEffect(() => {
-
-    console.log(apiController);
 
     const dispatcher = new URL(POCKET_ENDPOINT);
     const configuration = new Configuration(5, 1000, 0, 40000, undefined, undefined, undefined, undefined, undefined, undefined, false);
@@ -52,6 +53,43 @@ const App = () => {
     });
   }, []);
 
+  const unlock = async (id, password) => {
+    try {
+      apiController.unlock(id, password)
+        .then(({ token, expiration }) => {
+          setAPIToken(token);
+          setAPITokenExpiration(expiration);
+        })
+        .catch(handleError);
+    } catch(err) {
+      handleError(err);
+    }
+  };
+
+  useEffect(() => {
+    if(userId && masterPassword) {
+      unlock(userId, masterPassword)
+        .catch(handleError);
+    }
+  }, [apiController, masterPassword, userId]);
+
+  useEffect(() => {
+    let interval;
+    if(apiTokenExpiration) {
+      interval = setInterval(async () => {
+        try {
+          if(dayjs().isAfter(dayjs(apiTokenExpiration)))
+            await unlock(userId, masterPassword);
+        } catch(err) {
+          handleError(err);
+        }
+      }, 30000);
+    }
+    return () => {
+      clearInterval(interval);
+    }
+  }, [apiTokenExpiration, masterPassword, userId]);
+
   const styles = {
     container: {
       position: 'absolute',
@@ -70,7 +108,7 @@ const App = () => {
   } else if(!account) {
     activeView = <CreateAccount accountController={accountController} handleError={handleError} masterPassword={masterPassword} onChange={setAccount} />;
   } else if(!userId) {
-    activeView = <RegisterUser handleError={handleError} masterPassword={masterPassword} onChange={setUserId} />;
+    activeView = <RegisterUser account={account} handleError={handleError} apiController={apiController} masterPassword={masterPassword} onChange={setUserId} />;
   }
 
   return (

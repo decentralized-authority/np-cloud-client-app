@@ -31,6 +31,8 @@ module.exports.API_ENDPOINT_VAR = API_ENDPOINT_VAR;
 module.exports.CONTACT_NAME = 'Shane Burgett';
 module.exports.CONTACT_EMAIL = 'shane@decentralizedauthority.com';
 
+module.exports.REQUEST_TIMEOUT = 30000;
+
 try {
   if(window) {
     module.exports.POCKET_ENDPOINT = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, POCKET_ENDPOINT_VAR);

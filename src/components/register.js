@@ -6,8 +6,9 @@ import { dataStore } from '../modules/data-store';
 import { getPocketInstance } from '../util';
 import _ from 'lodash';
 import { Account } from '../types/account';
+import { ApiController } from '../modules/api-controller';
 
-export const RegisterUser = ({ account, masterPassword, handleError, onChange }) => {
+export const RegisterUser = ({ account, apiController, masterPassword, handleError, onChange }) => {
 
   const [ invitation, setInvitation ] = useState('');
 
@@ -52,7 +53,15 @@ export const RegisterUser = ({ account, masterPassword, handleError, onChange })
     try {
       e.preventDefault();
       const preppedInvitation = invitation.trim();
-      console.log('preppedInvitation', preppedInvitation);
+      const id = await apiController.register(
+        preppedInvitation,
+        account.address,
+        masterPassword,
+      );
+      if(id) {
+        dataStore.setItem(dataStoreKeys.USER_ID, id);
+        onChange(id);
+      }
     } catch(err) {
       handleError(err);
     }
@@ -77,6 +86,7 @@ export const RegisterUser = ({ account, masterPassword, handleError, onChange })
 RegisterUser.propTypes = {
   masterPassword: PropTypes.string,
   account: PropTypes.instanceOf(Account),
+  apiController: PropTypes.instanceOf(ApiController),
   handleError: PropTypes.func,
   onChange: PropTypes.func,
 };
