@@ -21,9 +21,12 @@ const ipcMainListeners = {
 module.exports.ipcMainListeners = ipcMainListeners;
 
 module.exports.PW_ENV_VAR = 'NPC_PASSWORD';
-const POCKET_ENDPOINT_VAR = 'NPC_POCKET_ENDPOINT';
 
+const POCKET_ENDPOINT_VAR = 'NPC_POCKET_ENDPOINT';
 module.exports.POCKET_ENDPOINT_VAR = POCKET_ENDPOINT_VAR;
+
+const API_ENDPOINT_VAR = 'NPC_API_ENDPOINT';
+module.exports.API_ENDPOINT_VAR = API_ENDPOINT_VAR;
 
 module.exports.CONTACT_NAME = 'Shane Burgett';
 module.exports.CONTACT_EMAIL = 'shane@decentralizedauthority.com';
@@ -31,6 +34,7 @@ module.exports.CONTACT_EMAIL = 'shane@decentralizedauthority.com';
 try {
   if(window) {
     module.exports.POCKET_ENDPOINT = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, POCKET_ENDPOINT_VAR);
+    module.exports.API_ENDPOINT = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, API_ENDPOINT_VAR);
   }
 } catch(err) {
   // do nothing
