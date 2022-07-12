@@ -17,6 +17,11 @@ const ipcMainListeners = {
   GET_ENV: 'GET_ENV',
   GET_ENV_SYNC: 'GET_ENV_SYNC',
   OPEN_EXTERNAL: 'OPEN_EXTERNAL',
+  COPY_TO_CLIPBOARD: 'COPY_TO_CLIPBOARD',
+  SAVE_PRIVATE_KEY: 'SAVE_PRIVATE_KEY',
+  SAVE_KEY_PASSWORD: 'SAVE_KEY_PASSWORD',
+  GET_PRIVATE_KEYS: 'GET_PRIVATEKEYS',
+  GET_KEY_PASSWORDS: 'GET_KEY_PASSWORDS',
 };
 module.exports.ipcMainListeners = ipcMainListeners;
 
@@ -32,6 +37,8 @@ module.exports.CONTACT_NAME = 'Shane Burgett';
 module.exports.CONTACT_EMAIL = 'shane@decentralizedauthority.com';
 
 module.exports.REQUEST_TIMEOUT = 30000;
+
+module.exports.TRANSACTION_FEE_UPOKT = '10000';
 
 try {
   if(window) {

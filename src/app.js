@@ -10,6 +10,7 @@ import { AccountController } from './modules/account-controller';
 import { Configuration, HttpRpcProvider, Pocket } from '@pokt-network/pocket-js';
 import { ApiController } from './modules/api-controller';
 import dayjs from 'dayjs';
+import { Dashboard } from './components/dashboard';
 
 const handleError = err => {
   console.error(err);
@@ -30,6 +31,8 @@ const App = () => {
   const [ apiController ] = useState(new ApiController(API_ENDPOINT));
   const [ apiToken, setAPIToken ] = useState('');
   const [ apiTokenExpiration, setAPITokenExpiration ] = useState('');
+  const [ walletBalance, setWalletBalance ] = useState('0');
+  const [ nodes, setNodes ] = useState([]);
 
   useEffect(() => {
 
@@ -40,8 +43,9 @@ const App = () => {
     setAccountController(new AccountController(pocket));
 
     const account = dataStore.getItem(dataStoreKeys.ACCOUNT);
-    if(account)
+    if(account) {
       setAccount(new Account(account));
+    }
     const userId = dataStore.getItem(dataStoreKeys.USER_ID);
     if(userId)
       setUserId(userId);
@@ -55,14 +59,33 @@ const App = () => {
 
   useEffect(() => {
     let interval;
-    const getNodes = () => {
-      apiController
-        .getNodes(userId, apiToken)
-        .then(nodes => {
-          console.log('nodes', nodes);
-        })
-        .catch(console.error);
+    if(account && accountController) {
+      const getBalance = () => {
+        accountController.getBalance(account.address)
+          .then(setWalletBalance)
+          .catch(console.log);
+      };
+      getBalance();
+      interval = setInterval(() => {
+        getBalance();
+      }, 60000);
+    }
+    return () => {
+      clearInterval(interval);
     };
+  }, [account, accountController]);
+
+  const getNodes = () => {
+    apiController
+      .getNodes(userId, apiToken)
+      .then(nodes => {
+        setNodes(nodes);
+      })
+      .catch(console.error);
+  };
+
+  useEffect(() => {
+    let interval;
     if(userId && apiToken) {
       getNodes();
       setInterval(() => {
@@ -130,6 +153,17 @@ const App = () => {
     activeView = <CreateAccount accountController={accountController} handleError={handleError} masterPassword={masterPassword} onChange={setAccount} />;
   } else if(!userId) {
     activeView = <RegisterUser account={account} handleError={handleError} apiController={apiController} masterPassword={masterPassword} onChange={setUserId} />;
+  } else {
+    activeView = <Dashboard account={account}
+                            userId={userId}
+                            nodes={nodes}
+                            accountController={accountController}
+                            apiToken={apiToken}
+                            balance={walletBalance}
+                            handleError={handleError}
+                            apiController={apiController}
+                            onUpdateNodes={()=>getNodes()}
+                            masterPassword={masterPassword} />;
   }
 
   return (

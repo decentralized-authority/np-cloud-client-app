@@ -1,10 +1,14 @@
 const path = require('path');
 const isDev = require('electron-is-dev');
 const serve = require('electron-serve');
-const { app, screen, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, screen, BrowserWindow, clipboard, ipcMain, shell } = require('electron');
 const electronContextMenu = require('electron-context-menu');
 const { ipcMainListeners } = require('../src/constants');
-const { generateSalt, pbkdf2 } = require('./util');
+const { generateSalt, pbkdf2, encrypt, decrypt} = require('./util');
+const {DB} = require('./db');
+
+const dataDir = app.getPath('userData');
+const db = new DB(dataDir);
 
 electronContextMenu();
 
@@ -53,6 +57,59 @@ ipcMain.handle(ipcMainListeners.HASH_PASSWORD, (e, password, salt) => {
 ipcMain.on(ipcMainListeners.OPEN_EXTERNAL, (e, url) => {
   shell.openExternal(url)
     .catch(console.error);
+});
+ipcMain.on(ipcMainListeners.COPY_TO_CLIPBOARD, (e, val) => {
+  clipboard.writeText(val);
+});
+
+ipcMain.handle(ipcMainListeners.SAVE_KEY_PASSWORD, async (e, masterPassword, address, passwordToSave) => {
+  try {
+    const salt = generateSalt();
+    const iv = generateSalt();
+    const encrypted = encrypt(masterPassword, salt, passwordToSave, iv);
+    await db.passwords.insert({
+      address,
+      salt,
+      encrypted,
+      iv,
+    });
+    return true;
+  } catch(err) {
+    console.error(err);
+    return false;
+  }
+});
+ipcMain.handle(ipcMainListeners.GET_KEY_PASSWORDS, async (e, masterPassword) => {
+  const privateKeys = await db.passwords.find({});
+  return privateKeys
+    .reduce((obj, k) => {
+      return {
+        ...obj,
+        [k.address]: decrypt(masterPassword, k.salt, k.encrypted, k.iv),
+      };
+    }, {});
+});
+ipcMain.handle(ipcMainListeners.SAVE_PRIVATE_KEY, async (e, address, privateKeyEncrypted) => {
+  try {
+    await db.privateKeys.insert({
+      address,
+      privateKeyEncrypted,
+    });
+    return true;
+  } catch(err) {
+    console.error(err);
+    return false;
+  }
+});
+ipcMain.handle(ipcMainListeners.GET_PRIVATE_KEYS, async (e) => {
+  const privateKeys = await db.privateKeys.find({});
+  return privateKeys
+    .reduce((obj, k) => {
+      return {
+        ...obj,
+        [k.address]: k.privateKeyEncrypted
+      };
+    }, {});
 });
 
 app.on('window-all-closed', () => {

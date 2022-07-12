@@ -28,6 +28,7 @@
     "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "rxjs": "^7.4.0",
     "superagent": "^8.0.0",
     "sweetalert": "^2.1.2",
     "uuid": "^8.3.2",

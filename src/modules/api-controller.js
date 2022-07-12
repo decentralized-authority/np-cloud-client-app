@@ -1,6 +1,7 @@
 import request from 'superagent';
 import { REQUEST_TIMEOUT } from '../constants';
 import { ValidatorNode } from '../types/validator-node';
+import { AccountController } from './account-controller';
 
 export class ApiController {
 
@@ -81,8 +82,35 @@ export class ApiController {
     };
   }
 
-  async stakeValidator() {
-
+  /**
+   * @param {string} masterPassword
+   * @param {string} userId
+   * @param {string} token
+   * @param {string} stakeAmount
+   * @param {Account} account
+   * @param {AccountController} accountController
+   * @returns {Promise<{password: string, address: *}>}
+   */
+  async stakeValidator(userId, token, stakeAmount) {
+    const password = AccountController.generatePassword();
+    const { address, encryptedPrivateKey, balanceRequired } = await this._makeRequest(() => request
+      .post(`${this._apiEndpoint}/api/v1/stake_validator`)
+      .set({
+        auth_id: userId,
+        auth_key: token,
+      })
+      .type('application/json')
+      .timeout(REQUEST_TIMEOUT)
+      .send({
+        password,
+        stakeAmount,
+      }));
+    return {
+      address,
+      privateKeyEncrypted: encryptedPrivateKey,
+      password,
+      balanceRequired,
+    };
   }
 
   async unstakeValidator() {

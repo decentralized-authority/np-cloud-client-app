@@ -1,3 +1,18 @@
 .text-nowrap {
   white-space: nowrap;
 }
+.flex-gap-1 {
+  gap: 1em;
+}
+.flex-gap-2 {
+  gap: 2em;
+}
+.flex-gap-3 {
+  gap: 3em;
+}
+.flex-gap-4 {
+  gap: 4em;
+}
+.card {
+  margin-bottom: 0;
+}
