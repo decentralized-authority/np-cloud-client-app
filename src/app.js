@@ -79,7 +79,16 @@ const App = () => {
     apiController
       .getNodes(userId, apiToken)
       .then(nodes => {
-        setNodes(nodes);
+        setNodes([...nodes]
+          .reverse()
+          .sort((a, b) => {
+            if(a.staked === b.staked) {
+              return b.stakedBlock.localeCompare(a.stakedBlock);
+            } else {
+              return a.staked && !b.staked ? 1 : -1;
+            }
+          })
+        );
       })
       .catch(console.error);
   };

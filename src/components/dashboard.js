@@ -6,6 +6,8 @@ import { Send } from './shared/send';
 import { AccountController } from '../modules/account-controller';
 import { useState } from 'react';
 import { Stake } from './shared/stake';
+import { ValidatorNodes } from './shared/validator-nodes';
+import { ValidatorNode } from '../types/validator-node';
 
 const mainViews = {
   DASHBOARD: 'DASHBOARD',
@@ -13,7 +15,7 @@ const mainViews = {
   STAKE: '',
 };
 
-export const Dashboard = ({ userId, account, accountController, apiController, apiToken, balance, masterPassword, handleError, onUpdateNodes }) => {
+export const Dashboard = ({ userId, account, accountController, apiController, apiToken, balance, masterPassword, nodes, handleError, onUpdateNodes }) => {
 
   const [ mainView, setMainView ] = useState(mainViews.DASHBOARD);
 
@@ -37,9 +39,9 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
       flexGrow: 1,
     },
     leftSidebar: {
-      width: 400,
-      minWidth: 400,
-      maxWidth: 400,
+      width: 450,
+      minWidth: 450,
+      maxWidth: 450,
     },
     textCol1: {
       display: 'inline-block',
@@ -70,12 +72,7 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
   return (
     <div style={styles.container}>
       <div className={'pt-2 pb-2 pl-2 d-flex flex-column justify-content-start'} style={styles.leftSidebar}>
-        <div className={'card flex-grow-1'}>
-          <div className={'card-header'}>
-            <h3>Validator Nodes:</h3>
-          </div>
-          <div className={'card-body'}></div>
-        </div>
+        <ValidatorNodes nodes={nodes} />
       </div>
       <div className={'pt-2 pb-2 pl-2 pr-2 d-flex flex-column justify-content-start'} style={styles.body}>
 
@@ -88,7 +85,7 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
               <h4><span style={styles.textCol1}>Balance:</span><span style={styles.textCol2} className={'text-monospace'}>{balance} POKT</span></h4>
             </div>
             <div className={'d-flex flex-row justify-content-start flex-nowrap'}>
-              <h4><span style={styles.textCol1}>Address:</span><span style={styles.textCol2} className={'text-monospace'}>{account.address}</span> <span style={styles.textCol2}>(<a href={'#'} onClick={onCopyAddressClick}>copy</a>)</span></h4>
+              <h4><span style={styles.textCol1}>Address:</span><span style={styles.textCol2} className={'text-monospace'}>{account.address}</span> <span style={styles.textCol2}><a href={'#'} onClick={onCopyAddressClick}><span className={'mdi mdi-content-copy'} /></a></span></h4>
             </div>
             <div className={'mt-2 d-flex flex-row justify-content-start flex-wrap flex-gap-1'}>
               <button className={'btn btn-primary flex-grow-1'} onClick={onSendPoktClick}>Send POKT</button>
@@ -121,6 +118,7 @@ Dashboard.propTypes = {
   apiController: PropTypes.instanceOf(ApiController),
   apiToken: PropTypes.string,
   balance: PropTypes.string,
+  nodes: PropTypes.arrayOf(PropTypes.instanceOf(ValidatorNode)),
   handleError: PropTypes.func,
   onUpdateNodes: PropTypes.func,
 };
