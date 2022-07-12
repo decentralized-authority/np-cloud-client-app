@@ -1,5 +1,6 @@
 import request from 'superagent';
 import { REQUEST_TIMEOUT } from '../constants';
+import { ValidatorNode } from '../types/validator-node';
 
 export class ApiController {
 
@@ -88,12 +89,38 @@ export class ApiController {
 
   }
 
-  async getNodes() {
-
+  /**
+   * @param userId
+   * @param token
+   * @returns {Promise<ValidatorNode[]>}
+   */
+  async getNodes(userId, token) {
+    const nodes = await this._makeRequest(() => request
+      .get(`${this._apiEndpoint}/api/v1/nodes`)
+      .set({
+        auth_id: userId,
+        auth_key: token
+      })
+      .timeout(REQUEST_TIMEOUT));
+    return nodes
+      .map(n => new ValidatorNode(n));
   }
 
-  async getNode() {
-
+  /**
+   * @param {string} userId
+   * @param {string} token
+   * @param {string} address
+   * @returns {Promise<ValidatorNode>}
+   */
+  async getNode(userId, token, address) {
+    const node = await this._makeRequest(() => request
+      .get(`${this._apiEndpoint}/api/v1/nodes/${address}`)
+      .set({
+        auth_id: userId,
+        auth_key: token
+      })
+      .timeout(REQUEST_TIMEOUT));
+    return new ValidatorNode(node);
   }
 
 }

@@ -53,6 +53,27 @@ const App = () => {
     });
   }, []);
 
+  useEffect(() => {
+    let interval;
+    const getNodes = () => {
+      apiController
+        .getNodes(userId, apiToken)
+        .then(nodes => {
+          console.log('nodes', nodes);
+        })
+        .catch(console.error);
+    };
+    if(userId && apiToken) {
+      getNodes();
+      setInterval(() => {
+        getNodes();
+      }, 60000);
+    }
+    return () => {
+      clearInterval(interval);
+    }
+  }, [userId, apiToken, apiController]);
+
   const unlock = async (id, password) => {
     try {
       apiController.unlock(id, password)
