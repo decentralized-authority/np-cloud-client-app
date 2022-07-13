@@ -16,6 +16,22 @@ export const Stake = ({ userId, apiToken, account, accountController, apiControl
   const [ disableSubmit, setDisableSubmit ] = useState(false);
 
   const styles = {
+    scrollContainer: {
+      position: 'relative',
+    },
+    scrollInnerContainer: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      overflowX: 'hidden',
+      overflowY: 'auto',
+      paddingLeft: 24,
+      paddingRight: 24,
+      paddingTop: 24,
+      paddingBottom: 24,
+    },
     input: {
       maxWidth: 500,
     },
@@ -86,28 +102,30 @@ export const Stake = ({ userId, apiToken, account, accountController, apiControl
       <div className={'card-header'}>
         <h3><a href={'#'} title={'Back'} onClick={onBackClick}><span className={'mdi mdi-arrow-left'} /></a> Stake Validator(s):</h3>
       </div>
-      <div className={'card-body'}>
-        <form onSubmit={onSubmit}>
+      <div className={'card-body'} style={styles.scrollContainer}>
+        <div style={styles.scrollInnerContainer}>
+          <form onSubmit={onSubmit}>
 
-          <div className={'form-group'}>
-            <label>Stake Amount: <em>(minimum 15100 POKT)</em></label>
-            <input type={'number'} style={styles.input} className={'form-control text-monospace'} placeholder={'Enter stake amount'} value={stakeAmount} onChange={onStakeAmountChange} />
-          </div>
+            <div className={'form-group'}>
+              <label>Stake Amount: <em>(minimum 15100 POKT)</em></label>
+              <input type={'number'} style={styles.input} className={'form-control text-monospace'} placeholder={'Enter stake amount'} value={stakeAmount} onChange={onStakeAmountChange} />
+            </div>
 
-          <div className={'form-group'}>
-            <label>Number of New Validators to Stake:</label>
-            <input type={'number'} style={styles.input} className={'form-control text-monospace'} placeholder={'Enter new validator count'} value={validatorCount} onChange={onValidatorCountChange} />
-          </div>
+            <div className={'form-group'}>
+              <label>Number of New Validators to Stake:</label>
+              <input type={'number'} style={styles.input} className={'form-control text-monospace'} placeholder={'Enter new validator count'} value={validatorCount} onChange={onValidatorCountChange} />
+            </div>
 
-          <div className={'form-group'}>
-            <p>Total cost <strong>{total}</strong> POKT</p>
-          </div>
+            <div className={'form-group'}>
+              <p>Total cost <strong>{total}</strong> POKT</p>
+            </div>
 
-          <div className={'form-group'}>
-            <button type={'submit'} className={'btn btn-primary'} disabled={disableSubmit}>Stake New Validators</button>
-          </div>
+            <div className={'form-group'}>
+              <button type={'submit'} className={'btn btn-primary'} disabled={disableSubmit}>Stake New Validators</button>
+            </div>
 
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

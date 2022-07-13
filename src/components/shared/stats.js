@@ -34,6 +34,22 @@ export const Stats = ({ nodes, pricing, handleError }) => {
   }, [nodes, pricing]);
 
   const styles = {
+    scrollContainer: {
+      position: 'relative',
+    },
+    scrollInnerContainer: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      overflowX: 'hidden',
+      overflowY: 'auto',
+      paddingLeft: 24,
+      paddingRight: 24,
+      paddingTop: 14,
+      paddingBottom: 24,
+    },
     spacer: {
       display: 'inline-block',
       width: 24,
@@ -59,20 +75,22 @@ export const Stats = ({ nodes, pricing, handleError }) => {
       <div className={'card-header'}>
         <h3>Validator Stats</h3>
       </div>
-      <div className={'card-body'}>
+      <div className={'card-body'} style={styles.scrollContainer}>
+        <div style={styles.scrollInnerContainer}>
 
-        <h3>Total Staked POKT:</h3>
-        <h2 className={'text-success text-monospace'}>{totalStaked} POKT <small style={{fontSize: '80%'}}>{totalUSDStaked ? `$${totalUSDStaked} USD` : ''}</small></h2>
+          <h3>Total Staked POKT:</h3>
+          <h2 className={'text-success text-monospace'}>{totalStaked} POKT <small style={{fontSize: '80%'}}>{totalUSDStaked ? `$${totalUSDStaked} USD` : ''}</small></h2>
 
-        <h3 className={'mt-3'}>Staked Validators:</h3>
-        <h2><span className={'text-success'}>{staked}</span></h2>
+          <h3 className={'mt-3'}>Staked Validators:</h3>
+          <h2><span className={'text-success'}>{staked}</span></h2>
 
-        <h3 className={'mt-3'}>Validators Scheduled to Unstake:</h3>
-        <h2 className={'text-warning'}>{scheduledForUnstake}</h2>
+          <h3 className={'mt-3'}>Validators Scheduled to Unstake:</h3>
+          <h2 className={'text-warning'}>{scheduledForUnstake}</h2>
 
-        <h3 className={'mt-3'}>Validators Not Staked:</h3>
-        <h2 className={'text-danger'}>{notStaked}</h2>
+          <h3 className={'mt-3'}>Validators Not Staked:</h3>
+          <h2 className={'text-danger'}>{notStaked}</h2>
 
+        </div>
       </div>
     </div>
   );

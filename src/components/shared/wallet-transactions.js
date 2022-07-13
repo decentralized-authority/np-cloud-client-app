@@ -43,7 +43,7 @@ export const WalletTransactions = ({ account, accountController, pricing, handle
       overflowX: 'hidden',
       overflowY: 'auto',
     },
-  }
+  };
 
   const onBackClick = e => {
     e.preventDefault();
