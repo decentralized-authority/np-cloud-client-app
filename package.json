@@ -1,6 +1,6 @@
 {
   "name": "np-cloud-client-app",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "./src-back/index.js",
   "private": true,
   "dependencies": {
