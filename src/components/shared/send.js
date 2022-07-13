@@ -12,6 +12,7 @@ export const Send = ({ account, accountController, balance, handleError, masterP
   const [ amount, setAmount ] = useState('');
   const [ toAddress, setToAddress ] = useState('');
   const [ memo, setMemo ] = useState('');
+  const [ disableSubmit, setDisableSubmit ] = useState(false);
 
   const styles = {
     input: {
@@ -35,28 +36,32 @@ export const Send = ({ account, accountController, balance, handleError, masterP
   const onSubmit = async e => {
     e.preventDefault();
     try {
+      setDisableSubmit(true);
       const preppedAmount = amount.trim();
       const amountNum = bignumber(preppedAmount);
       const preppedAddress = toAddress.trim();
       const preppedMemo = memo.trim();
       const validAddress = accountController.validateAddress(preppedAddress);
       if(!validAddress) {
+        setDisableSubmit(false);
         return swal({
           icon: 'warning',
           title: 'Oops!',
           text: `${preppedAddress} is not a valid address.`
         });
       } else if(math.equal(amountNum, bignumber(0))) {
+        setDisableSubmit(false);
         return swal({
           icon: 'warning',
           title: 'Oops!',
           text: `You must enter an amount greater than zero.`,
         });
       } else if(math.larger(amountNum, math.subtract(bignumber(balance), bignumber('0.01')))) {
+        setDisableSubmit(false);
         return swal({
           icon: 'warning',
           title: 'Oops!',
-          text: `Amount is greater than balance.`,
+          text: `Amount is greater than available balance.`,
         });
       }
       const privateKey = await accountController
@@ -68,6 +73,7 @@ export const Send = ({ account, accountController, balance, handleError, masterP
         preppedAddress,
         preppedMemo,
       );
+      setDisableSubmit(false);
       if(tx) {
         await swal({
           icon: 'success',
@@ -78,6 +84,7 @@ export const Send = ({ account, accountController, balance, handleError, masterP
       }
     } catch(err) {
       handleError(err);
+      setDisableSubmit(false);
     }
   };
   const onBackClick = e => {
@@ -109,7 +116,7 @@ export const Send = ({ account, accountController, balance, handleError, masterP
           </div>
 
           <div className={'form-group'}>
-            <button type={'submit'} className={'btn btn-primary'}>Submit Transaction</button>
+            <button type={'submit'} className={'btn btn-primary'} disabled={disableSubmit}>Submit Transaction</button>
           </div>
 
         </form>

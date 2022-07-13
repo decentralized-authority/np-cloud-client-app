@@ -13,6 +13,7 @@ export const Stake = ({ userId, apiToken, account, accountController, apiControl
 
   const [ stakeAmount, setStakeAmount ] = useState('15100');
   const [ validatorCount, setValidatorCount ] = useState('1');
+  const [ disableSubmit, setDisableSubmit ] = useState(false);
 
   const styles = {
     input: {
@@ -20,9 +21,26 @@ export const Stake = ({ userId, apiToken, account, accountController, apiControl
     },
   };
 
+  let total = '0';
+  try {
+    total = math.multiply(bignumber(stakeAmount), bignumber(validatorCount)).toString(10);
+  } catch(err) {
+    // do nothing with error
+  }
+
   const onSubmit = async e => {
     e.preventDefault();
     try {
+      setDisableSubmit(true);
+      const balance = await accountController.getBalance(account.address);
+      if(math.larger(total, bignumber(balance))) {
+        setDisableSubmit(false);
+        return swal({
+          icon: 'warning',
+          title: 'Oops!',
+          text: `Required amount is greater than available balance.`,
+        });
+      }
       const countNum = Number(validatorCount);
       const preppedStakeAmount = stakeAmount.trim();
       const privateKey = await accountController.getRawPrivateKey(account.privateKeyEncrypted, masterPassword);
@@ -35,6 +53,7 @@ export const Stake = ({ userId, apiToken, account, accountController, apiControl
         await window.ipcRenderer.invoke(ipcMainListeners.SAVE_PRIVATE_KEY, address, privateKeyEncrypted);
         await accountController.send(privateKey, balanceRequired, account.address, address);
       }
+      setDisableSubmit(false);
       await swal({
         icon: 'success',
         title: 'Stake Requests Successful',
@@ -46,6 +65,7 @@ export const Stake = ({ userId, apiToken, account, accountController, apiControl
       onDone(true);
     } catch(err) {
       handleError(err);
+      setDisableSubmit(false);
     }
   };
   const onBackClick = e => {
@@ -59,13 +79,6 @@ export const Stake = ({ userId, apiToken, account, accountController, apiControl
   const onValidatorCountChange = e => {
     e.preventDefault();
     setValidatorCount(e.target.value);
-  }
-
-  let total = '0';
-  try {
-    total = math.multiply(bignumber(stakeAmount), bignumber(validatorCount)).toString(10);
-  } catch(err) {
-    // do nothing with error
   }
 
   return (
@@ -91,7 +104,7 @@ export const Stake = ({ userId, apiToken, account, accountController, apiControl
           </div>
 
           <div className={'form-group'}>
-            <button type={'submit'} className={'btn btn-primary'}>Stake New Validators</button>
+            <button type={'submit'} className={'btn btn-primary'} disabled={disableSubmit}>Stake New Validators</button>
           </div>
 
         </form>
