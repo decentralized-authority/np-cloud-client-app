@@ -51,6 +51,7 @@ export class PricingController {
   /**
    * @param {BigNumber} amount
    * @param {string} currency
+   * @returns {string}
    */
   convert(amount, currency) {
     try {

@@ -108,7 +108,7 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
         </div>
 
         {mainView === mainViews.DASHBOARD ?
-          <Stats nodes={nodes} handleError={handleError} onDone={() => setMainView(mainViews.DASHBOARD)} />
+          <Stats nodes={nodes} handleError={handleError} onDone={() => setMainView(mainViews.DASHBOARD)} pricing={pricing} />
           :
           mainView === mainViews.SEND ?
             <Send account={account} accountController={accountController} balance={balance} handleError={handleError} masterPassword={masterPassword} onDone={() => setMainView(mainViews.DASHBOARD)} />
