@@ -11,6 +11,7 @@ import { ValidatorNode } from '../types/validator-node';
 import { Stats } from './shared/stats';
 import { PricingController } from '../modules/pricing-controller';
 import * as math from 'mathjs';
+import { Transactions } from './shared/transactions';
 
 const { bignumber } = math;
 
@@ -48,6 +49,11 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
       minWidth: 450,
       maxWidth: 450,
     },
+    rightSidebar: {
+      width: 370,
+      minWidth: 370,
+      maxWidth: 370,
+    },
     textCol1: {
       display: 'inline-block',
       minWidth: 100,
@@ -84,9 +90,11 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
 
   return (
     <div style={styles.container}>
+
       <div className={'pt-2 pb-2 pl-2 d-flex flex-column justify-content-start'} style={styles.leftSidebar}>
         <ValidatorNodes nodes={nodes} />
       </div>
+
       <div className={'pt-2 pb-2 pl-2 pr-2 d-flex flex-column justify-content-start'} style={styles.body}>
 
         <div className={'card mb-2'}>
@@ -118,8 +126,12 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
               :
               null
         }
-
       </div>
+
+      <div className={'pt-2 pb-2 pr-2 d-flex flex-column justify-content-start'} style={styles.rightSidebar}>
+        <Transactions accountController={accountController} nodes={nodes} />
+      </div>
+
     </div>
   );
 };

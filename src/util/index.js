@@ -14,3 +14,7 @@ export const timeout = (ms = 0) => new Promise(resolve => {
 export const generateId = () => {
   return uuid.v4().replace(/-/g, '');
 };
+
+export const truncateAddress = (address = '', amount = 6) => {
+  return `${address.slice(0, amount)}...${address.slice(-1 * amount)}`;
+};

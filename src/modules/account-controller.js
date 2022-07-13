@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { Account } from '../types/account';
-import { CoinDenom, Hex, Pocket } from '@pokt-network/pocket-js';
+import { CoinDenom, Hex, Pocket, Transaction as PocketTransaction } from '@pokt-network/pocket-js';
 import * as math from 'mathjs';
 import { REQUEST_TIMEOUT, TRANSACTION_FEE_UPOKT } from '../constants';
 import { generateId } from '../util';
@@ -116,6 +116,42 @@ export class AccountController {
 
   validateAddress(address) {
     return Hex.validateAddress(address);
+  }
+
+  /**
+   * @param {string} address
+   * @param {number} qty
+   * @returns {Promise<{received: PocketTransaction[], sent: PocketTransaction[]}>}
+   */
+  async getTransactions(address, qty = 20) {
+    const [ sent, received ] = await Promise.all([
+      this._pocket.rpc().query.getAccountTxs(
+        address,
+        false,
+        false,
+        1,
+        qty,
+        REQUEST_TIMEOUT,
+        true,
+      ),
+      this._pocket.rpc().query.getAccountTxs(
+        address,
+        true,
+        false,
+        1,
+        100,
+        REQUEST_TIMEOUT,
+        true,
+      ),
+    ])
+    if(_.isError(sent))
+      throw sent;
+    if(_.isError(received))
+      throw received;
+    return {
+      sent: sent.transactions,
+      received: received.transactions,
+    };
   }
 
 }

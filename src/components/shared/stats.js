@@ -57,7 +57,7 @@ export const Stats = ({ nodes, pricing, handleError }) => {
   return (
     <div className={'card flex-grow-1'}>
       <div className={'card-header'}>
-        <h3><span style={styles.spacer} /> Validator Stats:</h3>
+        <h3>Validator Stats</h3>
       </div>
       <div className={'card-body'}>
 
