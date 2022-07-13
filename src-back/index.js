@@ -3,7 +3,7 @@ const isDev = require('electron-is-dev');
 const serve = require('electron-serve');
 const { app, screen, BrowserWindow, clipboard, ipcMain, shell } = require('electron');
 const electronContextMenu = require('electron-context-menu');
-const { ipcMainListeners } = require('../src/constants');
+const { ipcMainListeners } = require('./constants');
 const { generateSalt, pbkdf2, encrypt, decrypt} = require('./util');
 const {DB} = require('./db');
 

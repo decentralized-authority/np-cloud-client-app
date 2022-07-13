@@ -15,8 +15,10 @@ export const MasterPassword = ({ handleError, onChange }) => {
   useEffect(() => {
     window.ipcRenderer.invoke(ipcMainListeners.GET_ENV, PW_ENV_VAR)
       .then(pw => {
-        setPassword(pw);
-        setPasswordRepeat(pw);
+        if(pw) {
+          setPassword(pw);
+          setPasswordRepeat(pw);
+        }
       })
       .catch(handleError);
   }, []);
@@ -100,11 +102,11 @@ export const MasterPassword = ({ handleError, onChange }) => {
   return (
     <div style={styles.container}>
       <form className={'pt-1 pb-1 pl-3 pr-3'} style={styles.form} onSubmit={onSubmit}>
-        <h1>Node Pilot Cloud Client App</h1>
+        <h1>Node Pilot Cloud Client</h1>
         {showLogin ?
-          <p>Welcome to the Node Pilot Cloud Client App! This is meant to be a proof of concept for interacting with the Node Pilot Cloud API. Please enter your master password to continue.</p>
+          <p>Welcome to the Node Pilot Cloud Client! This is meant to be a proof of concept for interacting with the Node Pilot Cloud API. Please enter your master password to continue.</p>
           :
-          <p>Welcome to the Node Pilot Cloud Client App! This is meant to be a proof of concept for interacting with the Node Pilot Cloud API.
+          <p>Welcome to the Node Pilot Cloud Client! This is meant to be a proof of concept for interacting with the Node Pilot Cloud API.
             Before you can begin, you need to add a master password and create an account. This password will be used to
             encrypt all of your private keys on Node Pilot servers.</p>
         }

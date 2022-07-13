@@ -47,11 +47,7 @@ module.exports.dashboardMainViews = {
   WALLET_TRANSACTIONS: 'WALLET_TRANSACTIONS',
 };
 
-try {
-  if(window) {
-    module.exports.POCKET_ENDPOINT = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, POCKET_ENDPOINT_VAR);
-    module.exports.API_ENDPOINT = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, API_ENDPOINT_VAR);
-  }
-} catch(err) {
-  // do nothing
-}
+const pocketEndpointVar = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, POCKET_ENDPOINT_VAR);
+module.exports.POCKET_ENDPOINT = pocketEndpointVar || 'http://192.168.191.122:8081';
+const apiEndpointVar = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, API_ENDPOINT_VAR);
+module.exports.API_ENDPOINT = apiEndpointVar || 'https://np-cloud-api-test.nodepilot.tech';

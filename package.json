@@ -28,6 +28,7 @@
     "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "rmrf-promise": "^1.1.0",
     "rxjs": "^7.4.0",
     "superagent": "^8.0.0",
     "sweetalert": "^2.1.2",
@@ -44,6 +45,13 @@
     "start": "react-scripts --max_old_space_size=8192 start",
     "start-app": "electron .",
     "build": "react-scripts --max_old_space_size=8192 build",
+    "build-native-linux": "npm run native-build-prep && electron-builder --dir --x64 --linux appImage --publish never",
+    "pack-native-linux": "npm run native-build-prep && electron-builder --linux --publish never",
+    "build-native-mac": "npm run native-build-prep && electron-builder --dir --x64 --mac zip --publish never",
+    "pack-native-mac": "npm run native-build-prep && electron-builder --mac --publish never",
+    "build-native-win": "npm run native-build-prep && electron-builder --dir --win zip --publish never",
+    "pack-native-win": "npm run native-build-prep && electron-builder --win --publish never",
+    "native-build-prep": "node ./build-scripts/clear-build-dir.js && npm run build && node ./build-scripts/copy-files.js && cd temp && npm install --production && cd ..",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -66,5 +74,81 @@
     ]
   },
   "author": "Ryan Burgett <ryan@burgettdev.net>",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "build": {
+    "electronVersion": "15.3.0",
+    "appId": "decentralizedauthority.com.np-cloud-client-app",
+    "productName": "Node Pilot Cloud Client",
+    "artifactName": "np-cloud-client-${version}-${os}-${arch}.${ext}",
+    "copyright": "Copyright © 2022 by Decentralized Authority",
+    "directories": {
+      "app": "temp",
+      "output": "build-native"
+    },
+    "extends": null,
+    "linux": {
+      "target": [
+        {
+          "target": "appImage",
+          "arch": [
+            "x64",
+            "armv7l"
+          ]
+        },
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "./public/logo512.png",
+      "synopsis": "Node Pilot Cloud Client by Decentralized Authority.",
+      "description": "Node Pilot Cloud Client by Decentralized Authority.",
+      "category": "Utility",
+      "desktop": {
+        "Name": "Node Pilot Cloud Client",
+        "StartupWMClass": "np-cloud-client-app"
+      },
+      "publish": {
+        "provider": "github",
+        "releaseType": "draft"
+      }
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.utilities",
+      "icon": "./public/favicon.icns",
+      "publish": {
+        "provider": "github",
+        "releaseType": "draft"
+      }
+    },
+    "win": {
+      "artifactName": "np-cloud-client-${version}-${os}-${arch}.${ext}",
+      "verifyUpdateCodeSignature": false,
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "./public/favicon.ico",
+      "publish": {
+        "provider": "github",
+        "releaseType": "draft"
+      }
+    }
+  }
 }

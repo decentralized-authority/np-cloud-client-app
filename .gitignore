@@ -10,6 +10,8 @@
 
 # production
 /build
+/build-native
+/temp
 
 # misc
 .DS_Store
