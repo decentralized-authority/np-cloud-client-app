@@ -48,6 +48,6 @@ module.exports.dashboardMainViews = {
 };
 
 const pocketEndpointVar = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, POCKET_ENDPOINT_VAR);
-module.exports.POCKET_ENDPOINT = pocketEndpointVar || 'http://192.168.191.122:8081';
+module.exports.POCKET_ENDPOINT = pocketEndpointVar || 'https://np-cloud-api-test.nodepilot.tech:8081';
 const apiEndpointVar = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, API_ENDPOINT_VAR);
 module.exports.API_ENDPOINT = apiEndpointVar || 'https://np-cloud-api-test.nodepilot.tech';
