@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import { ValidatorNode } from '../../types/validator-node';
-import { ipcMainListeners } from '../../constants';
+import { dashboardMainViews, ipcMainListeners } from '../../constants';
 import { truncateAddress } from '../../util';
 
-export const ValidatorNodes = ({ nodes }) => {
+export const ValidatorNodes = ({ nodes, setDashboardMainView }) => {
   const styles = {
     listContainer: {
       position: 'relative',
@@ -27,10 +27,16 @@ export const ValidatorNodes = ({ nodes }) => {
     },
   };
 
+  const onNewClick = e => {
+    e.preventDefault();
+    setDashboardMainView(dashboardMainViews.STAKE);
+  };
+
   return (
     <div className={'card flex-grow-1'}>
-      <div className={'card-header'}>
+      <div className={'card-header d-flex flex-row justify-content-between'}>
         <h3>Validator Nodes</h3>
+        <button className={'btn btn-primary'} onClick={onNewClick}>Create New Node(s)</button>
       </div>
       <div className={'card-body'} style={styles.listContainer}>
         <div style={styles.listInnerContainer}>
@@ -65,4 +71,5 @@ export const ValidatorNodes = ({ nodes }) => {
 };
 ValidatorNodes.propTypes = {
   nodes: PropTypes.arrayOf(PropTypes.instanceOf(ValidatorNode)),
+  setDashboardMainView: PropTypes.func,
 };

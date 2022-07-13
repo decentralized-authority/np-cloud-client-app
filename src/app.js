@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { dataStore } from './modules/data-store';
-import { dataStoreKeys, API_ENDPOINT, POCKET_ENDPOINT } from './constants';
+import { dashboardMainViews, dataStoreKeys, API_ENDPOINT, POCKET_ENDPOINT } from './constants';
 import { MasterPassword } from './components/master-password';
 import { CreateAccount } from './components/create-account';
 import swal from 'sweetalert';
@@ -35,6 +35,7 @@ const App = () => {
   const [ walletBalance, setWalletBalance ] = useState('0');
   const [ nodes, setNodes ] = useState([]);
   const [ pricing, setPricing ] = useState(new PricingController({}));
+  const [ dashboardMainView, setDashboardMainView ] = useState(dashboardMainViews.DASHBOARD);
 
   useEffect(() => {
 
@@ -81,7 +82,7 @@ const App = () => {
       const getBalance = () => {
         accountController.getBalance(account.address)
           .then(setWalletBalance)
-          .catch(console.log);
+          .catch(console.error);
       };
       getBalance();
       interval = setInterval(() => {
@@ -191,6 +192,8 @@ const App = () => {
                             handleError={handleError}
                             apiController={apiController}
                             onUpdateNodes={()=>getNodes()}
+                            dashboardMainView={dashboardMainView}
+                            setDashboardMainView={setDashboardMainView}
                             masterPassword={masterPassword} />;
   }
 

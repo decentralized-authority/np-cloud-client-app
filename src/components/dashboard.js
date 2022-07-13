@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { ipcMainListeners } from '../constants';
+import { dashboardMainViews, ipcMainListeners } from '../constants';
 import { Account } from '../types/account';
 import { ApiController } from '../modules/api-controller';
 import { Send } from './shared/send';
@@ -12,18 +12,11 @@ import { Stats } from './shared/stats';
 import { PricingController } from '../modules/pricing-controller';
 import * as math from 'mathjs';
 import { Transactions } from './shared/transactions';
+import { WalletTransactions } from './shared/wallet-transactions';
 
 const { bignumber } = math;
 
-const mainViews = {
-  DASHBOARD: 'DASHBOARD',
-  SEND: 'SEND',
-  STAKE: '',
-};
-
-export const Dashboard = ({ userId, account, accountController, apiController, apiToken, balance, masterPassword, nodes, pricing, handleError, onUpdateNodes }) => {
-
-  const [ mainView, setMainView ] = useState(mainViews.DASHBOARD);
+export const Dashboard = ({ dashboardMainView, setDashboardMainView, userId, account, accountController, apiController, apiToken, balance, masterPassword, nodes, pricing, handleError, onUpdateNodes }) => {
 
   const styles = {
     container: {
@@ -61,6 +54,9 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
     textCol2: {
       fontWeight: 'normal',
     },
+    walletButton: {
+      flexBasis: '1px',
+    },
   };
   const onCopyAddressClick = e => {
     e.preventDefault();
@@ -68,16 +64,16 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
   };
   const onSendPoktClick = e => {
     e.preventDefault();
-    setMainView(mainViews.SEND);
+    setDashboardMainView(dashboardMainViews.SEND);
   };
-  const onCreateValidatorClick = e => {
+  const onViewWalletTransactionsClick = e => {
     e.preventDefault();
-    setMainView(mainViews.STAKE);
+    setDashboardMainView(dashboardMainViews.WALLET_TRANSACTIONS);
   };
   const onStakeDone = updateNodes => {
     if(updateNodes)
       onUpdateNodes();
-    setMainView(mainViews.DASHBOARD);
+    setDashboardMainView(dashboardMainViews.DASHBOARD);
   };
 
   let balanceInUSD = '';
@@ -92,7 +88,7 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
     <div style={styles.container}>
 
       <div className={'pt-2 pb-2 pl-2 d-flex flex-column justify-content-start'} style={styles.leftSidebar}>
-        <ValidatorNodes nodes={nodes} />
+        <ValidatorNodes nodes={nodes} setDashboardMainView={setDashboardMainView} />
       </div>
 
       <div className={'pt-2 pb-2 pl-2 pr-2 d-flex flex-column justify-content-start'} style={styles.body}>
@@ -109,22 +105,25 @@ export const Dashboard = ({ userId, account, accountController, apiController, a
               <h4><span style={styles.textCol1}>Address:</span><span style={styles.textCol2} className={'text-monospace'}>{account.address}</span> <span style={styles.textCol2}><a href={'#'} onClick={onCopyAddressClick}><span className={'mdi mdi-content-copy'} /></a></span></h4>
             </div>
             <div className={'mt-2 d-flex flex-row justify-content-start flex-wrap flex-gap-1'}>
-              <button className={'btn btn-primary flex-grow-1'} onClick={onSendPoktClick}>Send POKT</button>
-              <button className={'btn btn-primary flex-grow-1'} onClick={onCreateValidatorClick}>Create Validator(s)</button>
+              <button style={styles.walletButton} className={'btn btn-primary flex-grow-1'} onClick={onSendPoktClick}>Send POKT</button>
+              <button style={styles.walletButton} className={'btn btn-primary flex-grow-1'} onClick={onViewWalletTransactionsClick}>View Wallet Transactions</button>
             </div>
           </div>
         </div>
 
-        {mainView === mainViews.DASHBOARD ?
-          <Stats nodes={nodes} handleError={handleError} onDone={() => setMainView(mainViews.DASHBOARD)} pricing={pricing} />
+        {dashboardMainView === dashboardMainViews.DASHBOARD ?
+          <Stats nodes={nodes} handleError={handleError} onDone={() => setDashboardMainView(dashboardMainViews.DASHBOARD)} pricing={pricing} />
           :
-          mainView === mainViews.SEND ?
-            <Send account={account} accountController={accountController} balance={balance} handleError={handleError} masterPassword={masterPassword} onDone={() => setMainView(mainViews.DASHBOARD)} />
+          dashboardMainView === dashboardMainViews.SEND ?
+            <Send account={account} accountController={accountController} balance={balance} handleError={handleError} masterPassword={masterPassword} onDone={() => setDashboardMainView(dashboardMainViews.DASHBOARD)} />
             :
-            mainView === mainViews.STAKE ?
+            dashboardMainView === dashboardMainViews.STAKE ?
               <Stake userId={userId} apiToken={apiToken} account={account} accountController={accountController} apiController={apiController} balance={balance} handleError={handleError} masterPassword={masterPassword} onDone={onStakeDone} />
               :
-              null
+              dashboardMainView === dashboardMainViews.WALLET_TRANSACTIONS ?
+                <WalletTransactions account={account} accountController={accountController} handleError={handleError} pricing={pricing} onDone={() => setDashboardMainView(dashboardMainViews.DASHBOARD)} />
+                :
+                null
         }
       </div>
 
@@ -147,4 +146,6 @@ Dashboard.propTypes = {
   nodes: PropTypes.arrayOf(PropTypes.instanceOf(ValidatorNode)),
   handleError: PropTypes.func,
   onUpdateNodes: PropTypes.func,
+  dashboardMainView: PropTypes.string,
+  setDashboardMainView: PropTypes.func,
 };

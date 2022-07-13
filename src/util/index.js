@@ -1,4 +1,5 @@
 import * as uuid from 'uuid';
+import { Transaction as PocketTransaction } from '@pokt-network/pocket-js';
 
 /**
  * @param {number} ms
@@ -18,3 +19,16 @@ export const generateId = () => {
 export const truncateAddress = (address = '', amount = 6) => {
   return `${address.slice(0, amount)}...${address.slice(-1 * amount)}`;
 };
+
+/**
+ * @param {PocketTransaction[]} transactions
+ * @returns {PocketTransaction[]}
+ */
+export const sortTransactions = transactions => [...transactions]
+  .sort((a, b) => {
+    if(a.height === b.height) {
+      return a.index === b.index ? 0 : a.index > b.index ? -1 : 1;
+    } else {
+      return a.height > b.height ? -1 : 1
+    }
+  });

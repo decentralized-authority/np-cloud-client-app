@@ -40,6 +40,13 @@ module.exports.REQUEST_TIMEOUT = 30000;
 
 module.exports.TRANSACTION_FEE_UPOKT = '10000';
 
+module.exports.dashboardMainViews = {
+  DASHBOARD: 'DASHBOARD',
+  SEND: 'SEND',
+  STAKE: 'STAKE',
+  WALLET_TRANSACTIONS: 'WALLET_TRANSACTIONS',
+};
+
 try {
   if(window) {
     module.exports.POCKET_ENDPOINT = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, POCKET_ENDPOINT_VAR);

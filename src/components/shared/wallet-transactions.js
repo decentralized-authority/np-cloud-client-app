@@ -1,48 +1,34 @@
 import PropTypes from 'prop-types';
-import { ValidatorNode } from '../../types/validator-node';
+import { PricingController } from '../../modules/pricing-controller';
 import { useEffect, useState } from 'react';
 import { AccountController } from '../../modules/account-controller';
 import { sortTransactions } from '../../util';
-import * as math from 'mathjs';
+import { Account } from '../../types/account';
 import { TransactionCard } from './transaction-card';
 
-const { bignumber } = math;
-
-export const Transactions = ({ accountController, nodes }) => {
+export const WalletTransactions = ({ account, accountController, pricing, handleError, onDone }) => {
 
   const [ allTransactions, setAllTransactions ] = useState([]);
 
   useEffect(() => {
-    if(nodes && accountController) {
+    if(account && accountController) {
       (async function() {
         try {
-          let allSent = [];
-          let allReceived = [];
-          for(const node of nodes) {
-            const { sent, received } = await accountController.getTransactions(node.address)
-            allSent = [
-              ...allSent,
-              ...sent,
-            ];
-            allReceived = [
-              ...allReceived,
-              ...received,
-            ];
+          let { sent, received } = await accountController.getTransactions(account.address, 50)
+          for(let i = 0; i < sent.length; i++) {
+            sent[i].received = false;
           }
-          for(let i = 0; i < allSent.length; i++) {
-            allSent[i].received = false;
+          for(let i = 0; i < received.length; i++) {
+            received[i].received = true;
           }
-          for(let i = 0; i < allReceived.length; i++) {
-            allReceived[i].received = true;
-          }
-          const combined = sortTransactions([...allReceived, ...allSent]);
+          const combined = sortTransactions([...received, ...sent]);
           setAllTransactions(combined);
         } catch(err) {
           console.error(err);
         }
       })();
     }
-  }, [nodes, accountController]);
+  }, [account, accountController]);
 
   const styles = {
     listContainer: {
@@ -57,12 +43,17 @@ export const Transactions = ({ accountController, nodes }) => {
       overflowX: 'hidden',
       overflowY: 'auto',
     },
+  }
+
+  const onBackClick = e => {
+    e.preventDefault();
+    onDone();
   };
 
   return (
     <div className={'card flex-grow-1'}>
       <div className={'card-header'}>
-        <h3>Recent Node Transactions</h3>
+        <h3><a href={'#'} title={'Back'} onClick={onBackClick}><span className={'mdi mdi-arrow-left'} /></a> Wallet Transactions</h3>
       </div>
       <div className={'card-body'} style={styles.listContainer}>
         <div style={styles.listInnerContainer}>
@@ -79,7 +70,10 @@ export const Transactions = ({ accountController, nodes }) => {
     </div>
   );
 };
-Transactions.propTypes = {
+WalletTransactions.propTypes = {
+  account: PropTypes.instanceOf(Account),
   accountController: PropTypes.instanceOf(AccountController),
-  nodes: PropTypes.arrayOf(PropTypes.instanceOf(ValidatorNode)),
+  pricing: PropTypes.instanceOf(PricingController),
+  handleError: PropTypes.func,
+  onDone: PropTypes.func,
 };
