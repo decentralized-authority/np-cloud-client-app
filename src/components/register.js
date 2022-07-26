@@ -11,6 +11,7 @@ import { ApiController } from '../modules/api-controller';
 export const RegisterUser = ({ account, apiController, masterPassword, handleError, onChange }) => {
 
   const [ invitation, setInvitation ] = useState('');
+  const [ disableSubmit, setDisableSubmit ] = useState(false);
 
   const styles = {
     container: {
@@ -52,6 +53,7 @@ export const RegisterUser = ({ account, apiController, masterPassword, handleErr
   const onSubmit = async e => {
     try {
       e.preventDefault();
+      setDisableSubmit(true);
       const preppedInvitation = invitation.trim();
       const id = await apiController.register(
         preppedInvitation,
@@ -65,6 +67,7 @@ export const RegisterUser = ({ account, apiController, masterPassword, handleErr
     } catch(err) {
       handleError(err);
     }
+    setDisableSubmit(false);
   };
 
   return (
@@ -77,7 +80,7 @@ export const RegisterUser = ({ account, apiController, masterPassword, handleErr
           <input type={'text'} className={'form-control'} value={invitation} onChange={onInvitationChange} autoFocus={true} />
         </div>
         <div className={'form-group mt-3'}>
-          <button type={'submit'} className={'btn btn-primary w-100'} disabled={!invitation.trim()}>Submit</button>
+          <button type={'submit'} className={'btn btn-primary w-100'} disabled={!invitation.trim() || disableSubmit}>Submit</button>
         </div>
       </form>
     </div>

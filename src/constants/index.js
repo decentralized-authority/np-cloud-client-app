@@ -20,7 +20,7 @@ const ipcMainListeners = {
   COPY_TO_CLIPBOARD: 'COPY_TO_CLIPBOARD',
   SAVE_PRIVATE_KEY: 'SAVE_PRIVATE_KEY',
   SAVE_KEY_PASSWORD: 'SAVE_KEY_PASSWORD',
-  GET_PRIVATE_KEYS: 'GET_PRIVATEKEYS',
+  GET_PRIVATE_KEYS: 'GET_PRIVATE_KEYS',
   GET_KEY_PASSWORDS: 'GET_KEY_PASSWORDS',
 };
 module.exports.ipcMainListeners = ipcMainListeners;
@@ -36,7 +36,7 @@ module.exports.API_ENDPOINT_VAR = API_ENDPOINT_VAR;
 module.exports.CONTACT_NAME = 'Shane Burgett';
 module.exports.CONTACT_EMAIL = 'shane@decentralizedauthority.com';
 
-module.exports.REQUEST_TIMEOUT = 30000;
+module.exports.REQUEST_TIMEOUT = 300000;
 
 module.exports.TRANSACTION_FEE_UPOKT = '10000';
 

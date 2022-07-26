@@ -54,7 +54,7 @@ export class ApiController {
     const { id } = await this._makeRequest(() => request
       .post(`${this._apiEndpoint}/api/v1/register`)
       .type('application/json')
-      .timeout(REQUEST_TIMEOUT)
+      .timeout(60000 * 30)
       .send({
         invitation,
         address,
@@ -100,7 +100,7 @@ export class ApiController {
         auth_key: token,
       })
       .type('application/json')
-      .timeout(REQUEST_TIMEOUT)
+      .timeout(60000 * 30)
       .send({
         password,
         stakeAmount,
