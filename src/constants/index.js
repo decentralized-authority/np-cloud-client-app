@@ -30,6 +30,9 @@ module.exports.PW_ENV_VAR = 'NPC_PASSWORD';
 const POCKET_ENDPOINT_VAR = 'NPC_POCKET_ENDPOINT';
 module.exports.POCKET_ENDPOINT_VAR = POCKET_ENDPOINT_VAR;
 
+const POCKET_CHAIN_ID_VAR = 'NPC_POCKET_CHAIN_ID';
+module.exports.POCKET_CHAIN_VAR = POCKET_CHAIN_ID_VAR;
+
 const API_ENDPOINT_VAR = 'NPC_API_ENDPOINT';
 module.exports.API_ENDPOINT_VAR = API_ENDPOINT_VAR;
 
@@ -48,6 +51,12 @@ module.exports.dashboardMainViews = {
 };
 
 const pocketEndpointVar = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, POCKET_ENDPOINT_VAR);
-module.exports.POCKET_ENDPOINT = pocketEndpointVar || 'https://np-cloud-api-test.nodepilot.tech:8081';
+module.exports.POCKET_ENDPOINT = pocketEndpointVar || 'https://mainnet.gateway.pokt.network/v1/lb/622f3828b2feb20039807a2e';
 const apiEndpointVar = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, API_ENDPOINT_VAR);
-module.exports.API_ENDPOINT = apiEndpointVar || 'https://np-cloud-api-test.nodepilot.tech';
+const pocketChainIdVar = window.ipcRenderer.sendSync(ipcMainListeners.GET_ENV_SYNC, POCKET_CHAIN_ID_VAR);
+module.exports.POCKET_CHAIN_ID = pocketChainIdVar || 'mainnet';
+module.exports.API_ENDPOINT = apiEndpointVar || 'https://cloud-api.nodepilot.tech';
+
+console.log(module.exports.POCKET_CHAIN_ID);
+console.log(module.exports.POCKET_ENDPOINT);
+console.log(module.exports.API_ENDPOINT);

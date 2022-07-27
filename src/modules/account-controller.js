@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Account } from '../types/account';
 import { CoinDenom, Hex, Pocket, Transaction as PocketTransaction } from '@pokt-network/pocket-js';
 import * as math from 'mathjs';
-import { REQUEST_TIMEOUT, TRANSACTION_FEE_UPOKT } from '../constants';
+import { POCKET_CHAIN_ID, REQUEST_TIMEOUT, TRANSACTION_FEE_UPOKT } from '../constants';
 import { generateId } from '../util';
 
 const { bignumber } = math;
@@ -93,7 +93,7 @@ export class AccountController {
       throw transactionSender;
     const rawTxResponse = await transactionSender
       .send(fromAddress, toAddress, math.multiply(bignumber(amount), bignumber('1000000')).toString())
-      .submit('testnet', TRANSACTION_FEE_UPOKT, CoinDenom.Upokt, memo, REQUEST_TIMEOUT);
+      .submit(POCKET_CHAIN_ID, TRANSACTION_FEE_UPOKT, CoinDenom.Upokt, memo, REQUEST_TIMEOUT);
     if(_.isError(rawTxResponse))
       throw rawTxResponse;
     return rawTxResponse.hash;
