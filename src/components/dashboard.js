@@ -13,6 +13,7 @@ import { PricingController } from '../modules/pricing-controller';
 import * as math from 'mathjs';
 import { Transactions } from './shared/transactions';
 import { WalletTransactions } from './shared/wallet-transactions';
+import swal from 'sweetalert';
 
 const { bignumber } = math;
 
@@ -75,6 +76,18 @@ export const Dashboard = ({ dashboardMainView, setDashboardMainView, userId, acc
       onUpdateNodes();
     setDashboardMainView(dashboardMainViews.DASHBOARD);
   };
+  const onViewPrivateKeyClick = async e => {
+    e.preventDefault();
+    const { privateKeyEncrypted } = account;
+    const decrypted = await accountController.getRawPrivateKey(
+      privateKeyEncrypted,
+      masterPassword,
+    );
+    await swal({
+      title: 'Raw Private Key',
+      text: decrypted,
+    });
+  };
 
   let balanceInUSD = '';
   try {
@@ -94,8 +107,9 @@ export const Dashboard = ({ dashboardMainView, setDashboardMainView, userId, acc
       <div className={'pt-2 pb-2 pl-2 pr-2 d-flex flex-column justify-content-start'} style={styles.body}>
 
         <div className={'card mb-2'}>
-          <div className={'card-header'}>
+          <div className={'card-header d-flex flex-row justify-content-between'}>
             <h3>Wallet</h3>
+            <button type={'button'} className={'btn btn-primary'} onClick={onViewPrivateKeyClick}>View Private Key</button>
           </div>
           <div className={'card-body'}>
             <div className={'d-flex flex-row justify-content-start flex-nowrap'}>
