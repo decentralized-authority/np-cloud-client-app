@@ -88,6 +88,10 @@ export const Dashboard = ({ dashboardMainView, setDashboardMainView, userId, acc
       text: decrypted,
     });
   };
+  // const onExportNodeKeysClick = async e => {
+  //   e.preventDefault();
+  //   console.log('nodes', nodes);
+  // };
 
   let balanceInUSD = '';
   try {
@@ -102,6 +106,7 @@ export const Dashboard = ({ dashboardMainView, setDashboardMainView, userId, acc
 
       <div className={'pt-2 pb-2 pl-2 d-flex flex-column justify-content-start'} style={styles.leftSidebar}>
         <ValidatorNodes nodes={nodes} setDashboardMainView={setDashboardMainView} />
+        {/*<button type={'button'} className={'btn btn-primary mt-2'} onClick={onExportNodeKeysClick}>Export Node Private Keys</button>*/}
       </div>
 
       <div className={'pt-2 pb-2 pl-2 pr-2 d-flex flex-column justify-content-start'} style={styles.body}>
