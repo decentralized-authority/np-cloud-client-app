@@ -118,7 +118,7 @@ const App = () => {
       getNodes();
       setInterval(() => {
         getNodes();
-      }, 60000);
+      }, 180000);
     }
     return () => {
       clearInterval(interval);
