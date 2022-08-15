@@ -1,9 +1,13 @@
-import { localStorageKeys } from '../constants';
+import { ipcMainListeners, localStorageKeys } from '../constants';
 
 class DataStore {
 
   constructor() {
-    this._getData();
+    const data = this._getData();
+    const fsDatastore = window.ipcRenderer.sendSync(ipcMainListeners.GET_DATASTORE);
+    if(Object.keys(fsDatastore).length === 0) {
+      window.ipcRenderer.sendSync(ipcMainListeners.SAVE_DATASTORE, data);
+    }
   }
 
   /**
@@ -42,6 +46,7 @@ class DataStore {
     };
     const serialized = JSON.stringify(newData);
     localStorage.setItem(localStorageKeys.NPC_DATASTORE, serialized);
+    window.ipcRenderer.sendSync(ipcMainListeners.SAVE_DATASTORE, newData);
     return val;
   }
 

@@ -5,7 +5,8 @@ const { app, screen, BrowserWindow, clipboard, ipcMain, shell } = require('elect
 const electronContextMenu = require('electron-context-menu');
 const { ipcMainListeners } = require('./constants');
 const { generateSalt, pbkdf2, encrypt, decrypt} = require('./util');
-const {DB} = require('./db');
+const { DB } = require('./db');
+const fs = require('fs-extra');
 
 const dataDir = app.getPath('userData');
 const db = new DB(dataDir);
@@ -110,6 +111,18 @@ ipcMain.handle(ipcMainListeners.GET_PRIVATE_KEYS, async (e) => {
         [k.address]: k.privateKeyEncrypted
       };
     }, {});
+});
+
+const datastorePath = path.join(dataDir, 'user-data.json');
+if(!fs.pathExistsSync(datastorePath)) {
+  fs.writeJsonSync(datastorePath, {}, {spaces: 2});
+}
+ipcMain.on(ipcMainListeners.SAVE_DATASTORE, (e, data) => {
+  fs.writeJsonSync(datastorePath, data, {spaces: 2});
+  e.returnValue = true;
+});
+ipcMain.on(ipcMainListeners.GET_DATASTORE, e => {
+  e.returnValue = fs.readJsonSync(datastorePath);
 });
 
 app.on('window-all-closed', () => {
