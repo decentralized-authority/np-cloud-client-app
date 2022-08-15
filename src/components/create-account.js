@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { dataStoreKeys } from '../constants';
 import { dataStore } from '../modules/data-store';
 import { AccountController } from '../modules/account-controller';
+import { onImportUserData } from '../util';
 
 export const CreateAccount = ({ accountController, handleError, masterPassword, onChange }) => {
 
@@ -70,11 +71,15 @@ export const CreateAccount = ({ accountController, handleError, masterPassword, 
       handleError(err);
     }
   };
+  const onImportUserDataClick = async e => {
+    e.preventDefault();
+    await onImportUserData();
+  };
 
   return (
     <div style={styles.container}>
       <form className={'pt-1 pb-1 pl-3 pr-3'} style={styles.form} onSubmit={onSubmit}>
-        <h1>Create/Import Account</h1>
+        <h1 className={'d-flex flex-row justify-content-between'}>Create/Import Account <button title={'Import user data'} className={'btn btn-primary'} type={'button'} style={{paddingTop: 0, paddingBottom: 0, fontSize: 20}} onClick={onImportUserDataClick}><i className={'mdi mdi-file-import'} /></button></h1>
         <h4 className={'mt-3 pb-3'}>Would you like to create a new POKT wallet or use and existing one?</h4>
         <div className={'form-group'} style={styles.buttonContainer}>
           <button type={'button'} className={`btn btn-${importAccount ? 'primary' : 'secondary'} w-100`} onClick={onToggleImportClick}>Import Account</button>

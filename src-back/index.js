@@ -142,6 +142,29 @@ ipcMain.on(ipcMainListeners.EXPORT_USER_DATA, async (e, data) => {
     return;
   await fs.writeJsonSync(filePath, data, {spaces: 2});
 });
+ipcMain.handle(ipcMainListeners.IMPORT_USER_DATA, async e => {
+  const { canceled, filePaths } = await dialog.showOpenDialog(
+    appWindow,
+    {
+      title: 'Import user data',
+      filters: [
+        {name: 'JSON files', extensions: ['json']}
+      ],
+    }
+  );
+  if(canceled || filePaths.length === 0)
+    return;
+  try {
+    return await fs.readJson(filePaths[0]);
+  } catch(err) {
+    console.error(err);
+  }
+});
+
+ipcMain.on(ipcMainListeners.RESTART, e => {
+  app.relaunch();
+  app.quit();
+});
 
 app.on('window-all-closed', () => {
   app.quit();

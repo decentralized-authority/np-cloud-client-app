@@ -15,5 +15,7 @@ const ipcMainListeners = {
   SAVE_DATASTORE: 'SAVE_DATASTORE',
   GET_DATASTORE: 'GET_DATASTORE',
   EXPORT_USER_DATA: 'EXPORT_USER_DATA',
+  IMPORT_USER_DATA: 'IMPORT_USER_DATA',
+  RESTART: 'RESTART',
 };
 module.exports.ipcMainListeners = ipcMainListeners;

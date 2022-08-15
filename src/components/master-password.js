@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import swal from 'sweetalert';
 import { dataStoreKeys, ipcMainListeners, PW_ENV_VAR } from '../constants';
 import { dataStore } from '../modules/data-store';
+import { onImportUserData } from '../util';
 
 export const MasterPassword = ({ handleError, onChange }) => {
 
@@ -98,11 +99,15 @@ export const MasterPassword = ({ handleError, onChange }) => {
       }
     }
   };
+  const onImportUserDataClick = async e => {
+    e.preventDefault();
+    await onImportUserData();
+  };
 
   return (
     <div style={styles.container}>
       <form className={'pt-1 pb-1 pl-3 pr-3'} style={styles.form} onSubmit={onSubmit}>
-        <h1>Node Pilot Cloud Client</h1>
+        <h1 className={'d-flex flex-row justify-content-between'}>Node Pilot Cloud Client {!showLogin ? <button title={'Import user data'} className={'btn btn-primary'} type={'button'} style={{paddingTop: 0, paddingBottom: 0, fontSize: 20}} onClick={onImportUserDataClick}><i className={'mdi mdi-file-import'} /></button> : ''}</h1>
         {showLogin ?
           <p>Welcome to the Node Pilot Cloud Client! This is meant to be a proof of concept for interacting with the Node Pilot Cloud API. Please enter your master password to continue.</p>
           :
