@@ -1,7 +1,7 @@
 const path = require('path');
 const isDev = require('electron-is-dev');
 const serve = require('electron-serve');
-const { app, screen, BrowserWindow, clipboard, ipcMain, shell } = require('electron');
+const { app, screen, BrowserWindow, clipboard, dialog, ipcMain, shell } = require('electron');
 const electronContextMenu = require('electron-context-menu');
 const { ipcMainListeners } = require('./constants');
 const { generateSalt, pbkdf2, encrypt, decrypt} = require('./util');
@@ -15,9 +15,11 @@ electronContextMenu();
 
 const serveDir = !isDev ? serve({directory: path.resolve(__dirname, '../build')}) : null;
 
+let appWindow;
+
 const init = async function() {
   const { height, width } = screen.getPrimaryDisplay().workAreaSize;
-  const appWindow = new BrowserWindow({
+  appWindow = new BrowserWindow({
     backgroundColor: '#14171a',
     width: width - 200,
     minWidth: 1280,
@@ -123,6 +125,22 @@ ipcMain.on(ipcMainListeners.SAVE_DATASTORE, (e, data) => {
 });
 ipcMain.on(ipcMainListeners.GET_DATASTORE, e => {
   e.returnValue = fs.readJsonSync(datastorePath);
+});
+
+ipcMain.on(ipcMainListeners.EXPORT_USER_DATA, async (e, data) => {
+  const { canceled, filePath } = await dialog.showSaveDialog(
+    appWindow,
+    {
+      title: 'Save user data',
+      defaultPath: 'npc_user_data.json',
+      filters: [
+        {name: 'JSON files', extensions: ['json']}
+      ],
+    }
+  );
+  if(canceled || !filePath)
+    return;
+  await fs.writeJsonSync(filePath, data, {spaces: 2});
 });
 
 app.on('window-all-closed', () => {

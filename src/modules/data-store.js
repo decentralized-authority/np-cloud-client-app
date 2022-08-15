@@ -26,6 +26,10 @@ class DataStore {
     return data;
   }
 
+  getData() {
+    return this._getData();
+  }
+
   /**
    * @param {string} key
    * @returns {any}
