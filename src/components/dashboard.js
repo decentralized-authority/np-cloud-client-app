@@ -118,8 +118,8 @@ export const Dashboard = ({ dashboardMainView, setDashboardMainView, userId, acc
         <div className={'card mb-2'}>
           <div className={'card-header d-flex flex-row justify-content-between'}>
             <h3 style={{flexGrow: 1}}>Wallet</h3>
-            <button type={'button'} className={'btn btn-primary btn-sm mr-2'} onClick={onExportUserDataClick}>Export User Data</button>
-            <button type={'button'} className={'btn btn-primary btn-sm'} onClick={onViewPrivateKeyClick}>View Private Key</button>
+            <button type={'button'} className={'btn btn-primary btn-sm mr-2'} style={{fontSize: 20}} onClick={onExportUserDataClick} title={'Export user data'}><i className={'mdi mdi-file-export'} /></button>
+            <button type={'button'} className={'btn btn-primary btn-sm'} style={{fontSize: 20}} onClick={onViewPrivateKeyClick} title={'Show private key'}><i className={'mdi mdi-account-key'} /></button>
           </div>
           <div className={'card-body'}>
             <div className={'d-flex flex-row justify-content-start flex-nowrap'}>
