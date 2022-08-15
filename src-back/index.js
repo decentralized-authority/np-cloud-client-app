@@ -8,6 +8,18 @@ const { generateSalt, pbkdf2, encrypt, decrypt} = require('./util');
 const { DB } = require('./db');
 const fs = require('fs-extra');
 
+// Only allow one instance of the application to be open at a time
+const unlocked = app.requestSingleInstanceLock();
+if(!unlocked) {
+  app.quit();
+}
+app.on('second-instance', () => {
+  if(appWindow) {
+    if (appWindow.isMinimized()) appWindow.restore();
+    appWindow.focus();
+  }
+});
+
 const dataDir = app.getPath('userData');
 const db = new DB(dataDir);
 
