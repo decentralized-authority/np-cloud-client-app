@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^13.2.1",
     "array-buffer-to-hex": "^1.0.0",
     "bootstrap": "^4.0.0",
+    "csv-stringify": "^6.2.0",
     "dayjs": "^1.11.3",
     "electron-context-menu": "^3.1.1",
     "electron-is-dev": "^2.0.0",

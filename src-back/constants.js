@@ -16,6 +16,7 @@ const ipcMainListeners = {
   GET_DATASTORE: 'GET_DATASTORE',
   EXPORT_USER_DATA: 'EXPORT_USER_DATA',
   IMPORT_USER_DATA: 'IMPORT_USER_DATA',
+  EXPORT_CSV_FILE: 'EXPORT_CSV_FILE',
   RESTART: 'RESTART',
 };
 module.exports.ipcMainListeners = ipcMainListeners;

@@ -151,4 +151,19 @@ export class ApiController {
     return new ValidatorNode(node);
   }
 
+  /**
+   * @param {string} userId
+   * @param {string} token
+   * @returns {Promise<{[address: string]: string}>}
+   */
+  async getNodePrivateKeys(userId, token) {
+    return await this._makeRequest(() => request
+      .get(`${this._apiEndpoint}/api/v1/node_keys`)
+      .set({
+        auth_id: userId,
+        auth_key: token
+      })
+      .timeout(REQUEST_TIMEOUT));
+  }
+
 }

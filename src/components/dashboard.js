@@ -109,7 +109,7 @@ export const Dashboard = ({ dashboardMainView, setDashboardMainView, userId, acc
     <div style={styles.container}>
 
       <div className={'pt-2 pb-2 pl-2 d-flex flex-column justify-content-start'} style={styles.leftSidebar}>
-        <ValidatorNodes nodes={nodes} setDashboardMainView={setDashboardMainView} />
+        <ValidatorNodes nodes={nodes} setDashboardMainView={setDashboardMainView} apiController={apiController} accountController={accountController} userId={userId} apiToken={apiToken} masterPassword={masterPassword} handleError={handleError} />
         {/*<button type={'button'} className={'btn btn-primary mt-2'} onClick={onExportNodeKeysClick}>Export Node Private Keys</button>*/}
       </div>
 

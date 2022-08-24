@@ -7,6 +7,7 @@ const { ipcMainListeners } = require('./constants');
 const { generateSalt, pbkdf2, encrypt, decrypt} = require('./util');
 const { DB } = require('./db');
 const fs = require('fs-extra');
+const { stringify: csvStringify } = require('csv-stringify/sync');
 
 // Only allow one instance of the application to be open at a time
 const unlocked = app.requestSingleInstanceLock();
@@ -170,6 +171,28 @@ ipcMain.handle(ipcMainListeners.IMPORT_USER_DATA, async e => {
     return await fs.readJson(filePaths[0]);
   } catch(err) {
     console.error(err);
+  }
+});
+
+ipcMain.handle(ipcMainListeners.EXPORT_CSV_FILE, async (e, content) => {
+  const { canceled, filePath } = await dialog.showSaveDialog(
+    appWindow,
+    {
+      title: 'Save node private keys',
+      defaultPath: 'node_keys.csv',
+      filters: [
+        {name: 'CSV files', extensions: ['csv']}
+      ],
+    }
+  );
+  if(canceled || !filePath)
+    return '';
+  try {
+    await fs.writeFile(filePath, csvStringify(content), 'utf8');
+    return filePath;
+  } catch(err) {
+    console.error(err);
+    return '';
   }
 });
 
